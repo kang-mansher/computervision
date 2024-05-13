@@ -1,7 +1,7 @@
 from ultralytics import FastSAM
 from ultralytics.models.fastsam import FastSAMPrompt
 
-source = "/tmp/vision/input.jpg"
+source = "/app/vision/input.jpg"
 
 model = FastSAM('FastSAM-x.pt') 
 
@@ -15,6 +15,6 @@ prompt_process.plot(annotations=ann, output='./result')
 
 result_file = "result/input.jpg"
 
-f = open("/tmp/vision/result.txt", "w")
+f = open("/app/vision/result.txt", "w")
 f.write(result_file)
 f.close()
