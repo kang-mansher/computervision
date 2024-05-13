@@ -8,7 +8,6 @@ RUN useradd -m myuser && \
     chown -R myuser:myuser /app && \
     chown -R myuser:myuser /tmp && \
     chown -R myuser:myuser /home && \
-    chown -R myuser:myuser /etc && \
     chown -R myuser:myuser /var
 
 USER myuser
