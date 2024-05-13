@@ -1,6 +1,9 @@
 FROM korekontrol/ubuntu-java-python3
 
-USER root
+RUN useradd -m myuser && \
+    chown -R myuser:myuser /app
+
+USER myuser
 
 VOLUME /tmp
 
