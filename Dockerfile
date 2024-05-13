@@ -4,13 +4,6 @@ VOLUME /tmp
 
 WORKDIR /app
 
-RUN useradd -m myuser && \
-    chown -R myuser:myuser /app && \
-    chown -R myuser:myuser /app/vision && \
-    chown -R myuser:myuser /tmp && \
-    chown -R myuser:myuser /home && \
-    chown -R myuser:myuser /var
-
 RUN apt-get update
 
 RUN python3 -m pip config set global.break-system-packages true
@@ -25,10 +18,16 @@ RUN pip install transformers
 
 RUN apt-get install -y git
 
-USER myuser
-
 COPY target/*.jar /app/app.jar
 COPY ./vision /app/vision
+
+RUN useradd -m myuser && \
+    chown -R myuser:myuser /app && \
+    chown -R myuser:myuser /tmp && \
+    chown -R myuser:myuser /home && \
+    chown -R myuser:myuser /var
+
+USER myuser
 
 EXPOSE 1025
 CMD ["java", "-jar", "/app/app.jar"]
