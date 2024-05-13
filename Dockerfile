@@ -1,13 +1,13 @@
 FROM korekontrol/ubuntu-java-python3
 
+VOLUME /tmp
+
+WORKDIR /app
+
 RUN useradd -m myuser && \
     chown -R myuser:myuser /app
 
 USER myuser
-
-VOLUME /tmp
-
-WORKDIR /app
 
 RUN apt-get update
 
