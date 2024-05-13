@@ -10,8 +10,6 @@ RUN useradd -m myuser && \
     chown -R myuser:myuser /home && \
     chown -R myuser:myuser /var
 
-USER myuser
-
 RUN apt-get update
 
 RUN python3 -m pip config set global.break-system-packages true
@@ -25,6 +23,8 @@ RUN pip install ultralytics
 RUN pip install transformers
 
 RUN apt-get install -y git
+
+USER myuser
 
 COPY target/*.jar /app/app.jar
 COPY ./vision /app/vision
