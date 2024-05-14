@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -38,7 +41,7 @@ public class DemoApplication {
 			FileUtils.delete(file);
 		}
 		FileUtils.deleteDirectory(new File("/app/result"));
-		image.transferTo(new File("/app/vision/input.jpg"));
+		saveResizedImage(ImageIO.read(image.getInputStream()));
 		run("/app/vision/semantic_segmentation.py", null);
 		FileUtils.delete(new File("/app/vision/input.jpg"));
 		String result = readResult();
@@ -53,7 +56,7 @@ public class DemoApplication {
 			FileUtils.delete(file);
 		}
 		FileUtils.deleteDirectory(new File("/app/result"));
-		image.transferTo(new File("/app/vision/input.jpg"));
+		saveResizedImage(ImageIO.read(image.getInputStream()));
 		run("/app/vision/instance_segmentation.py", input);
 		FileUtils.delete(new File("/app/vision/input.jpg"));
 		String result = readResult();
@@ -67,7 +70,7 @@ public class DemoApplication {
 			FileUtils.delete(file);
 		}
 		FileUtils.deleteDirectory(new File("/app/result"));
-		image.transferTo(new File("/app/vision/input.jpg"));
+		saveResizedImage(ImageIO.read(image.getInputStream()));
 		run("/app/vision/object_detection.py", null);
 		FileUtils.delete(new File("/app/vision/input.jpg"));
 		String result = readResult();
@@ -81,7 +84,7 @@ public class DemoApplication {
 			FileUtils.delete(file);
 		}
 		FileUtils.deleteDirectory(new File("/app/result"));
-		image.transferTo(new File("/app/vision/input.jpg"));
+		saveResizedImage(ImageIO.read(image.getInputStream()));
 		run("/app/vision/caption_image.py", null);
 		FileUtils.delete(new File("/app/vision/input.jpg"));
 		String result = readResult();
@@ -96,7 +99,7 @@ public class DemoApplication {
 			FileUtils.delete(file);
 		}
 		FileUtils.deleteDirectory(new File("/app/result"));
-		image.transferTo(new File("/app/vision/input.jpg"));
+		saveResizedImage(ImageIO.read(image.getInputStream()));
 		run("/app/vision/caption_input.py", input);
 		FileUtils.delete(new File("/app/vision/input.jpg"));
 		String result = readResult();
@@ -132,6 +135,38 @@ public class DemoApplication {
 	private String readResult() throws IOException {
 		byte[] encoded = Files.readAllBytes(Paths.get("/app/vision/result.txt"));
 		return new String(encoded, StandardCharsets.UTF_8);
+	}
+
+	private void saveResizedImage(BufferedImage originalImage) throws IOException {
+		File file = new File("/app/vision/input.jpg");
+		int targetSize = 1024;
+		if (originalImage.getWidth() <= targetSize && originalImage.getHeight() <= targetSize) {
+			ImageIO.write(originalImage, "jpg", file);
+			return;
+		}
+
+		int originalWidth = originalImage.getWidth();
+		int originalHeight = originalImage.getHeight();
+
+		// Calculate the aspect ratio
+		double aspectRatio = (double) originalWidth / originalHeight;
+
+		int newWidth, newHeight;
+		if (originalWidth > originalHeight) {
+			// Width is greater than height
+			newWidth = targetSize;
+			newHeight = (int) (newWidth / aspectRatio);
+		} else {
+			// Height is greater than or equal to width
+			newHeight = targetSize;
+			newWidth = (int) (newHeight * aspectRatio);
+		}
+
+		Image resultingImage = originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_FAST);
+		BufferedImage outputImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
+		outputImage.getGraphics().drawImage(resultingImage, 0, 0, null);
+
+		ImageIO.write(outputImage, "jpg", file);
 	}
 
 }
