@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.MediaType;
@@ -32,11 +33,11 @@ public class DemoApplication {
 
 	@PostMapping(value = "/semantic-segmentation", produces = MediaType.IMAGE_JPEG_VALUE)
 	public @ResponseBody byte[] semanticSegmentation(@RequestParam("image") MultipartFile image) throws IOException {
-		Files.deleteIfExists(Paths.get("/app/vision/result.txt"));
-		Files.deleteIfExists(Paths.get("/app/result"));
+		FileUtils.delete(new File("/app/vision/result.txt"));
+		FileUtils.deleteDirectory(new File("/app/result"));
 		image.transferTo(new File("/app/vision/input.jpg"));
 		run("/app/vision/semantic_segmentation.py", null);
-		Files.deleteIfExists(Paths.get("/app/vision/input.jpg"));
+		FileUtils.delete(new File("/app/vision/input.jpg"));
 		String result = readResult();
 		return Files.readAllBytes(Paths.get(result));
 	}
@@ -44,33 +45,33 @@ public class DemoApplication {
 	@PostMapping(value = "/instance-segmentation", produces = MediaType.IMAGE_JPEG_VALUE)
 	public @ResponseBody byte[] instanceSegmentation(@RequestParam("image") MultipartFile image,
 													 @RequestParam("input") String input) throws IOException {
-		Files.deleteIfExists(Paths.get("/app/vision/result.txt"));
-		Files.deleteIfExists(Paths.get("/app/result"));
+		FileUtils.delete(new File("/app/vision/result.txt"));
+		FileUtils.deleteDirectory(new File("/app/result"));
 		image.transferTo(new File("/app/vision/input.jpg"));
 		run("/app/vision/instance_segmentation.py", input);
-		Files.deleteIfExists(Paths.get("/app/vision/input.jpg"));
+		FileUtils.delete(new File("/app/vision/input.jpg"));
 		String result = readResult();
 		return Files.readAllBytes(Paths.get(result));
 	}
 
 	@PostMapping(value = "/object-detection", produces = MediaType.IMAGE_JPEG_VALUE)
 	public @ResponseBody byte[] objectDetection(@RequestParam("image") MultipartFile image) throws IOException {
-		Files.deleteIfExists(Paths.get("/app/vision/result.txt"));
-		Files.deleteIfExists(Paths.get("/app/result"));
+		FileUtils.delete(new File("/app/vision/result.txt"));
+		FileUtils.deleteDirectory(new File("/app/result"));
 		image.transferTo(new File("/app/vision/input.jpg"));
 		run("/app/vision/object_detection.py", null);
-		Files.deleteIfExists(Paths.get("/app/vision/input.jpg"));
+		FileUtils.delete(new File("/app/vision/input.jpg"));
 		String result = readResult();
 		return Files.readAllBytes(Paths.get(result));
 	}
 
 	@PostMapping("/caption-image")
 	public ResponseEntity<String> captionImage(@RequestParam("image") MultipartFile image) throws IOException {
-		Files.deleteIfExists(Paths.get("/app/vision/result.txt"));
-		Files.deleteIfExists(Paths.get("/app/result"));
+		FileUtils.delete(new File("/app/vision/result.txt"));
+		FileUtils.deleteDirectory(new File("/app/result"));
 		image.transferTo(new File("/app/vision/input.jpg"));
 		run("/app/vision/caption_image.py", null);
-		Files.deleteIfExists(Paths.get("/app/vision/input.jpg"));
+		FileUtils.delete(new File("/app/vision/input.jpg"));
 		String result = readResult();
 		return ResponseEntity.ok().body(result);
 	}
@@ -78,11 +79,11 @@ public class DemoApplication {
 	@PostMapping("/caption-input")
 	public ResponseEntity<String> captionInput(@RequestParam("image") MultipartFile image,
 											   @RequestParam("input") String input) throws IOException {
-		Files.deleteIfExists(Paths.get("/app/vision/result.txt"));
-		Files.deleteIfExists(Paths.get("/app/result"));
+		FileUtils.delete(new File("/app/vision/result.txt"));
+		FileUtils.deleteDirectory(new File("/app/result"));
 		image.transferTo(new File("/app/vision/input.jpg"));
 		run("/app/vision/caption_input.py", input);
-		Files.deleteIfExists(Paths.get("/app/vision/input.jpg"));
+		FileUtils.delete(new File("/app/vision/input.jpg"));
 		String result = readResult();
 		if (result.startsWith(input))
 			result =  result.substring(input.length());
