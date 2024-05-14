@@ -33,7 +33,10 @@ public class DemoApplication {
 
 	@PostMapping(value = "/semantic-segmentation", produces = MediaType.IMAGE_JPEG_VALUE)
 	public @ResponseBody byte[] semanticSegmentation(@RequestParam("image") MultipartFile image) throws IOException {
-		FileUtils.delete(new File("/app/vision/result.txt"));
+		File file = new File("/app/vision/result.txt");
+		if (file.exists()) {
+			FileUtils.delete(file);
+		}
 		FileUtils.deleteDirectory(new File("/app/result"));
 		image.transferTo(new File("/app/vision/input.jpg"));
 		run("/app/vision/semantic_segmentation.py", null);
@@ -45,7 +48,10 @@ public class DemoApplication {
 	@PostMapping(value = "/instance-segmentation", produces = MediaType.IMAGE_JPEG_VALUE)
 	public @ResponseBody byte[] instanceSegmentation(@RequestParam("image") MultipartFile image,
 													 @RequestParam("input") String input) throws IOException {
-		FileUtils.delete(new File("/app/vision/result.txt"));
+		File file = new File("/app/vision/result.txt");
+		if (file.exists()) {
+			FileUtils.delete(file);
+		}
 		FileUtils.deleteDirectory(new File("/app/result"));
 		image.transferTo(new File("/app/vision/input.jpg"));
 		run("/app/vision/instance_segmentation.py", input);
@@ -56,7 +62,10 @@ public class DemoApplication {
 
 	@PostMapping(value = "/object-detection", produces = MediaType.IMAGE_JPEG_VALUE)
 	public @ResponseBody byte[] objectDetection(@RequestParam("image") MultipartFile image) throws IOException {
-		FileUtils.delete(new File("/app/vision/result.txt"));
+		File file = new File("/app/vision/result.txt");
+		if (file.exists()) {
+			FileUtils.delete(file);
+		}
 		FileUtils.deleteDirectory(new File("/app/result"));
 		image.transferTo(new File("/app/vision/input.jpg"));
 		run("/app/vision/object_detection.py", null);
@@ -67,7 +76,10 @@ public class DemoApplication {
 
 	@PostMapping("/caption-image")
 	public ResponseEntity<String> captionImage(@RequestParam("image") MultipartFile image) throws IOException {
-		FileUtils.delete(new File("/app/vision/result.txt"));
+		File file = new File("/app/vision/result.txt");
+		if (file.exists()) {
+			FileUtils.delete(file);
+		}
 		FileUtils.deleteDirectory(new File("/app/result"));
 		image.transferTo(new File("/app/vision/input.jpg"));
 		run("/app/vision/caption_image.py", null);
@@ -79,7 +91,10 @@ public class DemoApplication {
 	@PostMapping("/caption-input")
 	public ResponseEntity<String> captionInput(@RequestParam("image") MultipartFile image,
 											   @RequestParam("input") String input) throws IOException {
-		FileUtils.delete(new File("/app/vision/result.txt"));
+		File file = new File("/app/vision/result.txt");
+		if (file.exists()) {
+			FileUtils.delete(file);
+		}
 		FileUtils.deleteDirectory(new File("/app/result"));
 		image.transferTo(new File("/app/vision/input.jpg"));
 		run("/app/vision/caption_input.py", input);
