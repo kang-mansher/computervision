@@ -18,6 +18,8 @@ RUN pip install transformers
 
 RUN apt-get install -y git
 
+RUN pip install openai==0.28
+
 COPY target/*.jar /app/app.jar
 COPY ./vision /app/vision
 

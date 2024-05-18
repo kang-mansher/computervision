@@ -1,25 +1,91 @@
-from transformers import AutoProcessor, AutoModelForCausalLM
-from PIL import Image
-import torch
+import base64
+import openai
 import sys
 
-processor = AutoProcessor.from_pretrained("microsoft/git-base-textvqa")
-model = AutoModelForCausalLM.from_pretrained("microsoft/git-base-textvqa")
+openai.api_key = "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"
 
-image = Image.open("/app/vision/input.jpg").convert("RGB")
+def encode_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode('utf-8')
 
-pixel_values = processor(images=image, return_tensors="pt").pixel_values
+image_path = "/app/vision/input.jpg"
+
+base64_image = encode_image(image_path)
+
+conversation_history = [
+    {
+        "role": "user",
+        "content": [
+            {
+                "type": "text",
+                "text": "Scan everything in this image"
+            },
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": f"data:image/jpeg;base64,{base64_image}"
+                }
+            }
+        ]
+    }
+]
+
+response = openai.ChatCompletion.create(
+    model="gpt-4o",
+    messages=conversation_history
+)
 
 question = sys.argv[1]
 
-input_ids = processor(text=question, add_special_tokens=False).input_ids
-input_ids = [processor.tokenizer.cls_token_id] + input_ids
-input_ids = torch.tensor(input_ids).unsqueeze(0)
+conversation_history = [
+    {
+        "role": "user",
+        "content": [
+            {
+                "type": "text",
+                "text": "Scan everything in this image"
+            },
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": f"data:image/jpeg;base64,{base64_image}"
+                }
+            }
+        ]
+    },
+    {
+        "role": "assistant",
+        "content": [
+            {
+                "type": "text",
+                "text": f"{response['choices'][0]['message']['content']}"
+            },
+        ]
+    },
+    {
+        "role": "user",
+        "content": [
+            {
+                "type": "text",
+                "text": f"{question}"
+            },
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": f"data:image/jpeg;base64,{base64_image}"
+                }
+            }
+        ]
+    }
+]
 
-generated_ids = model.generate(pixel_values=pixel_values, input_ids=input_ids, max_length=50)
-generated_caption = processor.batch_decode(generated_ids, skip_special_tokens=True)
-print(generated_caption)
+response2 = openai.ChatCompletion.create(
+    model="gpt-4o",
+    messages=conversation_history
+)
+
+generated_caption = response2['choices'][0]['message']['content']
 
 f = open("/app/vision/result.txt", "w")
-f.write(generated_caption[0])
+f.write(generated_caption)
 f.close()
