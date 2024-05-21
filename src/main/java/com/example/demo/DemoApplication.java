@@ -47,7 +47,7 @@ public class DemoApplication {
 
 		Arrays.stream(scripts).forEach(script -> {
 			try {
-				FileUtils.copyInputStreamToFile(getClass().getClassLoader().getResourceAsStream(script), new File("/app/vision/" + script));
+				FileUtils.copyInputStreamToFile(getClass().getClassLoader().getResourceAsStream(script), new File("./app/vision/" + script));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -56,14 +56,14 @@ public class DemoApplication {
 
 	@PostMapping(value = "/semantic-segmentation", produces = MediaType.IMAGE_JPEG_VALUE)
 	public @ResponseBody byte[] semanticSegmentation(@RequestParam("image") MultipartFile image) throws IOException {
-		File file = new File("/app/vision/result.txt");
+		File file = new File("./app/vision/result.txt");
 		if (file.exists()) {
 			FileUtils.delete(file);
 		}
-		FileUtils.deleteDirectory(new File("/app/result"));
+		FileUtils.deleteDirectory(new File("./app/result"));
 		saveResizedImage(ImageIO.read(image.getInputStream()));
-		run("/app/vision/semantic_segmentation.py", null);
-		FileUtils.delete(new File("/app/vision/input.jpg"));
+		run("./app/vision/semantic_segmentation.py", null);
+		FileUtils.delete(new File("./app/vision/input.jpg"));
 		String result = readResult();
 		return Files.readAllBytes(Paths.get(result));
 	}
@@ -71,42 +71,42 @@ public class DemoApplication {
 	@PostMapping(value = "/instance-segmentation", produces = MediaType.IMAGE_JPEG_VALUE)
 	public @ResponseBody byte[] instanceSegmentation(@RequestParam("image") MultipartFile image,
 													 @RequestParam("input") String input) throws IOException {
-		File file = new File("/app/vision/result.txt");
+		File file = new File("./app/vision/result.txt");
 		if (file.exists()) {
 			FileUtils.delete(file);
 		}
-		FileUtils.deleteDirectory(new File("/app/result"));
+		FileUtils.deleteDirectory(new File("./app/result"));
 		saveResizedImage(ImageIO.read(image.getInputStream()));
-		run("/app/vision/instance_segmentation.py", input);
-		FileUtils.delete(new File("/app/vision/input.jpg"));
+		run("./app/vision/instance_segmentation.py", input);
+		FileUtils.delete(new File("./app/vision/input.jpg"));
 		String result = readResult();
 		return Files.readAllBytes(Paths.get(result));
 	}
 
 	@PostMapping(value = "/object-detection", produces = MediaType.IMAGE_JPEG_VALUE)
 	public @ResponseBody byte[] objectDetection(@RequestParam("image") MultipartFile image) throws IOException {
-		File file = new File("/app/vision/result.txt");
+		File file = new File("./app/vision/result.txt");
 		if (file.exists()) {
 			FileUtils.delete(file);
 		}
-		FileUtils.deleteDirectory(new File("/app/result"));
+		FileUtils.deleteDirectory(new File("./app/result"));
 		saveResizedImage(ImageIO.read(image.getInputStream()));
-		run("/app/vision/object_detection.py", null);
-		FileUtils.delete(new File("/app/vision/input.jpg"));
+		run("./app/vision/object_detection.py", null);
+		FileUtils.delete(new File("./app/vision/input.jpg"));
 		String result = readResult();
 		return Files.readAllBytes(Paths.get(result));
 	}
 
 	@PostMapping("/caption-image")
 	public ResponseEntity<String> captionImage(@RequestParam("image") MultipartFile image) throws IOException {
-		File file = new File("/app/vision/result.txt");
+		File file = new File("./app/vision/result.txt");
 		if (file.exists()) {
 			FileUtils.delete(file);
 		}
-		FileUtils.deleteDirectory(new File("/app/result"));
+		FileUtils.deleteDirectory(new File("./app/result"));
 		saveResizedImage(ImageIO.read(image.getInputStream()));
-		run("/app/vision/caption_image.py", null);
-		FileUtils.delete(new File("/app/vision/input.jpg"));
+		run("./app/vision/caption_image.py", null);
+		FileUtils.delete(new File("./app/vision/input.jpg"));
 		String result = readResult();
 		return ResponseEntity.ok().body(result);
 	}
@@ -114,14 +114,14 @@ public class DemoApplication {
 	@PostMapping("/caption-input")
 	public ResponseEntity<String> captionInput(@RequestParam("image") MultipartFile image,
 											   @RequestParam("input") String input) throws IOException {
-		File file = new File("/app/vision/result.txt");
+		File file = new File("./app/vision/result.txt");
 		if (file.exists()) {
 			FileUtils.delete(file);
 		}
-		FileUtils.deleteDirectory(new File("/app/result"));
+		FileUtils.deleteDirectory(new File("./app/result"));
 		saveResizedImage(ImageIO.read(image.getInputStream()));
-		run("/app/vision/caption_input.py", input);
-		FileUtils.delete(new File("/app/vision/input.jpg"));
+		run("./app/vision/caption_input.py", input);
+		FileUtils.delete(new File("./app/vision/input.jpg"));
 		String result = readResult();
 		if (result.startsWith(input))
 			result =  result.substring(input.length());
@@ -153,12 +153,12 @@ public class DemoApplication {
 	}
 
 	private String readResult() throws IOException {
-		byte[] encoded = Files.readAllBytes(Paths.get("/app/vision/result.txt"));
+		byte[] encoded = Files.readAllBytes(Paths.get("./app/vision/result.txt"));
 		return new String(encoded, StandardCharsets.UTF_8);
 	}
 
 	private void saveResizedImage(BufferedImage originalImage) throws IOException {
-		File file = new File("/app/vision/input.jpg");
+		File file = new File("./app/vision/input.jpg");
 		int targetSize = 1024;
 		if (originalImage.getWidth() <= targetSize && originalImage.getHeight() <= targetSize) {
 			ImageIO.write(originalImage, "jpg", file);
