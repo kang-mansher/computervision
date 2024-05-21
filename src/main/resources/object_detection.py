@@ -9,6 +9,6 @@ results = model.predict(image, conf=0.5, save=True, project="result")
 
 result_file = results[0].save_dir + "/" + results[0].path
 
-f = open("/app/vision/result.txt", "w")
+f = open("./app/vision/result.txt", "w")
 f.write(result_file)
 f.close()

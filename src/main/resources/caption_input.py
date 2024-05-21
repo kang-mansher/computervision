@@ -86,6 +86,6 @@ response2 = openai.ChatCompletion.create(
 
 generated_caption = response2['choices'][0]['message']['content']
 
-f = open("/app/vision/result.txt", "w")
+f = open("./app/vision/result.txt", "w")
 f.write(generated_caption)
 f.close()

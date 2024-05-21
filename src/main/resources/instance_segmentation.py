@@ -16,6 +16,6 @@ prompt_process.plot(annotations=ann, output='./result')
 
 result_file = "result/input.jpg"
 
-f = open("/app/vision/result.txt", "w")
+f = open("./app/vision/result.txt", "w")
 f.write(result_file)
 f.close()
