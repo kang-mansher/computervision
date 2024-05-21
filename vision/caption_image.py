@@ -1,7 +1,7 @@
 import base64
 import openai
 
-openai.api_key = "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"
+openai.api_key = "dummy"
 
 def encode_image(image_path):
     with open(image_path, "rb") as image_file:

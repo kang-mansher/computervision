@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 @SpringBootApplication
 @RestController
@@ -31,7 +32,26 @@ public class DemoApplication {
 
 	@RequestMapping("/")
 	String sayHello() {
+		saveAllScripts();
 		return "Hello World!";
+	}
+
+	private void saveAllScripts() {
+		String[] scripts = {
+				"caption_image.py",
+				"caption_input.py",
+				"instance_segmentation.py",
+				"object_detection.py",
+				"semantic_segmentation.py"
+		};
+
+		Arrays.stream(scripts).forEach(script -> {
+			try {
+				FileUtils.copyInputStreamToFile(getClass().getClassLoader().getResourceAsStream(script), new File("/app/vision/" + script));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	@PostMapping(value = "/semantic-segmentation", produces = MediaType.IMAGE_JPEG_VALUE)
