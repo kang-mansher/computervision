@@ -3,7 +3,7 @@ from ultralytics import YOLO
 
 model = YOLO("yolov9c.pt")
 
-image = cv2.imread("/app/vision/input.jpg")
+image = cv2.imread("./app/vision/input.jpg")
 
 results = model.predict(image, conf=0.5, save=True, project="result")
 
