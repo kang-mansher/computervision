@@ -1,7 +1,7 @@
 from ultralytics import FastSAM
 from ultralytics.models.fastsam import FastSAMPrompt
 
-source = "/app/vision/input.jpg"
+source = "./app/vision/input.jpg"
 
 model = FastSAM('FastSAM-x.pt') 
 

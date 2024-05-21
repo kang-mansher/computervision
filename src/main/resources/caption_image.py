@@ -7,7 +7,7 @@ def encode_image(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode('utf-8')
 
-image_path = "/app/vision/input.jpg"
+image_path = "./app/vision/input.jpg"
 
 base64_image = encode_image(image_path)
 
